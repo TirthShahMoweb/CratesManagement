@@ -1,0 +1,230 @@
+[
+    {
+        "model": "crates.user",
+        "pk": 1,
+        "fields": {
+            "username": "sg_ahmedabad",
+            "email": "sg_ahmedabad@example.com",
+            "mobile_number": "+919999991001",
+            "first_name": "Ahmedabad",
+            "last_name": "SG",
+            "role": 4
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 2,
+        "fields": {
+            "username": "sg_surat",
+            "email": "sg_surat@example.com",
+            "mobile_number": "+919999991002",
+            "first_name": "Surat",
+            "last_name": "SG",
+            "role": 4
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 3,
+        "fields": {
+            "username": "sg_rajkot",
+            "email": "sg_rajkot@example.com",
+            "mobile_number": "+919999991003",
+            "first_name": "Rajkot",
+            "last_name": "SG",
+            "role": 4
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 4,
+        "fields": {
+            "username": "oo_ahmedabad",
+            "email": "oo_ahmedabad@example.com",
+            "mobile_number": "+919999992001",
+            "first_name": "Ahmedabad",
+            "last_name": "OO",
+            "role": 6
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 5,
+        "fields": {
+            "username": "oo_surat",
+            "email": "oo_surat@example.com",
+            "mobile_number": "+919999992002",
+            "first_name": "Surat",
+            "last_name": "OO",
+            "role": 6
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 6,
+        "fields": {
+            "username": "oo_rajkot",
+            "email": "oo_rajkot@example.com",
+            "mobile_number": "+919999992003",
+            "first_name": "Rajkot",
+            "last_name": "OO",
+            "role": 6
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 7,
+        "fields": {
+            "username": "wm_ahmedabad",
+            "email": "wm_ahmedabad@example.com",
+            "mobile_number": "+919999993001",
+            "first_name": "Ahmedabad",
+            "last_name": "WM",
+            "role": 7
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 8,
+        "fields": {
+            "username": "wm_surat",
+            "email": "wm_surat@example.com",
+            "mobile_number": "+919999993002",
+            "first_name": "Surat",
+            "last_name": "WM",
+            "role": 7
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 9,
+        "fields": {
+            "username": "wm_rajkot",
+            "email": "wm_rajkot@example.com",
+            "mobile_number": "+919999993003",
+            "first_name": "Rajkot",
+            "last_name": "WM",
+            "role": 7
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 10,
+        "fields": {
+            "username": "fs_nadiad",
+            "email": "fs_nadiad@example.com",
+            "mobile_number": "+919999994001",
+            "first_name": "Nadiad",
+            "last_name": "FS",
+            "role": 5
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 11,
+        "fields": {
+            "username": "fs_bhavnagar",
+            "email": "fs_bhavnagar@example.com",
+            "mobile_number": "+919999994002",
+            "first_name": "Bhavnagar",
+            "last_name": "FS",
+            "role": 5
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 12,
+        "fields": {
+            "username": "zm_cc_gujarat",
+            "email": "zm_cc_gujarat@example.com",
+            "mobile_number": "+919999995001",
+            "first_name": "Zonal",
+            "last_name": "Manager",
+            "role": 8
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 13,
+        "fields": {
+            "username": "sr_1",
+            "email": "sr_1@example.com",
+            "mobile_number": "+919999996001",
+            "first_name": "Sales",
+            "last_name": "Rep1",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 14,
+        "fields": {
+            "username": "sr_2",
+            "email": "sr_2@example.com",
+            "mobile_number": "+919999996002",
+            "first_name": "Sales",
+            "last_name": "Rep2",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 15,
+        "fields": {
+            "username": "sr_3",
+            "email": "sr_3@example.com",
+            "mobile_number": "+919999996003",
+            "first_name": "Sales",
+            "last_name": "Rep3",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 16,
+        "fields": {
+            "username": "sr_4",
+            "email": "sr_4@example.com",
+            "mobile_number": "+919999996004",
+            "first_name": "Sales",
+            "last_name": "Rep4",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 17,
+        "fields": {
+            "username": "sr_5",
+            "email": "sr_5@example.com",
+            "mobile_number": "+919999996005",
+            "first_name": "Sales",
+            "last_name": "Rep5",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 18,
+        "fields": {
+            "username": "sr_6",
+            "email": "sr_6@example.com",
+            "mobile_number": "+919999996006",
+            "first_name": "Sales",
+            "last_name": "Rep6",
+            "role": 9
+        }
+    },
+    {
+        "model": "crates.user",
+        "pk": 19,
+        "fields": {
+            "username": "sr_7",
+            "email": "sr_7@example.com",
+            "mobile_number": "+919999996007",
+            "first_name": "Sales",
+            "last_name": "Rep7",
+            "role": 9
+        }
+    }
+]

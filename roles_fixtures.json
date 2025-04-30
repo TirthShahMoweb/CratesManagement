@@ -1,0 +1,74 @@
+[
+    {
+        "model": "crates.role",
+        "pk": 1,
+        "fields": {
+            "name": "CEO",
+            "description": "Responsible for overall strategic direction, decision-making, and leadership of the company."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 2,
+        "fields": {
+            "name": "CTO",
+            "description": "Oversees the technological infrastructure, innovation, and ensures alignment with business goals."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 3,
+        "fields": {
+            "name": "CFO",
+            "description": "Manages financial planning, risk management, and ensures the company's financial stability."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 4,
+        "fields": {
+            "name": "SG",
+            "description": "Monitors and secures entry and exit points, ensuring safety and efficient vehicle movement."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 5,
+        "fields": {
+            "name": "FS",
+            "description": "Supervises daily operations on the floor, ensuring smooth workflow and addressing immediate issues."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 6,
+        "fields": {
+            "name": "OO",
+            "description": "Responsible for managing and coordinating operational tasks and logistics efficiently."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 7,
+        "fields": {
+            "name": "WM",
+            "description": "Manages warehouse operations, including inventory control, storage, and staff oversight."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 8,
+        "fields": {
+            "name": "ZM",
+            "description": "Oversees multiple collection centers and warehouses within a specific region for operational efficiency."
+        }
+    },
+    {
+        "model": "crates.role",
+        "pk": 9,
+        "fields": {
+            "name": "SR",
+            "description": "Builds relationships with customers, manages sales processes, and ensures client satisfaction."
+        }
+    }
+]
