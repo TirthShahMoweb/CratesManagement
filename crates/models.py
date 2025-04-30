@@ -32,8 +32,8 @@ class Warehouse(BaseModel):
     container_crates = models.IntegerField(null=True, blank=True)
     ready_to_sell_crates = models.IntegerField(null=True, blank=True)
     capacity = models.IntegerField()
-    operation_officer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-
+    operation_officer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    warehouse_manager = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='managed_warehouses', null=True, blank=True)
 
 class CollectionCenter(BaseModel):
     located_at = models.CharField(max_length=255)
