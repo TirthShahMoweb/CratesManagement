@@ -1,0 +1,30 @@
+# Ignore virtual environment
+venv/
+
+# Django-specific ignores
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+backup.json
+RolePermission.json
+
+# Media and Static files (optional for development)
+media/
+static/
+
+# Logs
+logs/
+*.log
+
+# IDE & OS files
+.vscode/
+.DS_Store
+
+# Coverage files (if testing)
+htmlcov/
+coverage.xml
+
+# Temporary files
+*.swp
+*.swo
