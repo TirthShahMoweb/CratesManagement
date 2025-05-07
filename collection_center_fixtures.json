@@ -1,0 +1,18 @@
+[
+    {
+        "model": "crates.collectioncenter",
+        "pk": 1,
+        "fields": {
+            "located_at": "Nadiad",
+            "capacity": 25000
+        }
+    },
+    {
+        "model": "crates.collectioncenter",
+        "pk": 2,
+        "fields": {
+            "located_at": "Bhavnagar",
+            "capacity": 20000
+        }
+    }
+]

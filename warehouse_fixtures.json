@@ -1,0 +1,26 @@
+[
+    {
+        "model": "crates.warehouse",
+        "pk": 1,
+        "fields": {
+            "located_at": "Ahmedabad",
+            "capacity": 5000
+        }
+    },
+    {
+        "model": "crates.warehouse",
+        "pk": 2,
+        "fields": {
+            "located_at": "Surat",
+            "capacity": 2500
+        }
+    },
+    {
+        "model": "crates.warehouse",
+        "pk": 3,
+        "fields": {
+            "located_at": "Rajkot",
+            "capacity": 3500
+        }
+    }
+]

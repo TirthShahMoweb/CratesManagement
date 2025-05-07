@@ -1,0 +1,26 @@
+[
+    {
+        "model": "crates.truck",
+        "pk": 1,
+        "fields": {
+            "number_plate": "GJ-01-AB-1234",
+            "capacity": 10000
+        }
+    },
+    {
+        "model": "crates.truck",
+        "pk": 2,
+        "fields": {
+            "number_plate": "GJ-02-XY-5678",
+            "capacity": 8000
+        }
+    },
+    {
+        "model": "crates.truck",
+        "pk": 3,
+        "fields": {
+            "number_plate": "GJ-03-UV-9101",
+            "capacity": 12000
+        }
+    }
+]
