@@ -206,5 +206,3 @@ class UnloadCratesEntrySerializer(serializers.Serializer):
             truck.save()
 
         return validated_data
-
-
