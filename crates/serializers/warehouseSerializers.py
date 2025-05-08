@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
-from ..models import Loadout, CollectionCenter, LoadoutBunch, User, Warehouse, CratesManagementLog, Truck
+from ..models import Loadout, CollectionCenter, StockInEmptyCrates, LoadoutBunch, User, Warehouse, CratesManagementLog, Truck
 
 
 
@@ -189,10 +189,11 @@ class UnloadCratesEntrySerializer(serializers.Serializer):
             next_loadout = Loadout.objects.filter(loadout_bunch=loadout.loadout_bunch, id__gt=loadout.id).order_by('id').first()
 
             if not next_loadout:
-                loadout.truck_status = "EXITED"
+            #     loadout.truck_status = "EXITED"
+            #     loadout.sg_exit_at = timezone.now()
                 loadout.loadout_bunch.loadoutBunch_status = "COMPLETED"
                 loadout.loadout_bunch.save()
-                loadout.save()
+                # loadout.save()
 
         location.save()
         log.total_crates -= validated_data['missing_crates']
@@ -206,3 +207,36 @@ class UnloadCratesEntrySerializer(serializers.Serializer):
             truck.save()
 
         return validated_data
+
+
+class BuyingEmptyCratesSerializer(serializers.ModelSerializer):
+    buying_crates = serializers.IntegerField()
+
+    class Meta:
+        model = StockInEmptyCrates
+        fields = ('vendor_description', 'buying_crates')
+    def validate(self, data):
+        crates = data.get('buying_crates')
+
+        if crates <= 0:
+            raise serializers.ValidationError({
+                "buying_crates": "Crates must be a positive number."})
+
+        user = self.context.get('user')
+        warehouse = get_object_or_404(Warehouse, operation_officer=user)
+        available_capacity = warehouse.capacity - warehouse.total_crates
+
+        if available_capacity < crates:
+            raise serializers.ValidationError({
+                "buying_crates": f"Available capacity: {available_capacity}, Requested: {crates} "})
+        return data
+
+    def create(self, validated_data):
+        user = self.context.get('user')
+        warehouse = get_object_or_404(Warehouse, operation_officer=user)
+        warehouse.empty_crates += validated_data['buying_crates']
+        warehouse.total_crates += validated_data['buying_crates']
+        warehouse.save()
+        return StockInEmptyCrates.objects.create(vendor_description=validated_data['vendor_description'],
+                                                 crates = validated_data['buying_crates'],
+                                                 warehouse = warehouse)

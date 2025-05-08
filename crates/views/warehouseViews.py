@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.db.models import Prefetch, F, Q
 
-from ..serializers.warehouseSerializers import LoadCratesSerializer, EmptyTruckEntryCheckSerializer, UnloadCratesEntrySerializer
+from ..serializers.warehouseSerializers import LoadCratesSerializer, BuyingEmptyCratesSerializer, EmptyTruckEntryCheckSerializer, UnloadCratesEntrySerializer
 from ..models import CollectionCenter, Warehouse, LoadoutBunch, Loadout, User, CratesManagementLog, Truck
 
 
@@ -123,9 +123,19 @@ class CanLoadTruckPermission(BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-        warehouse = Warehouse.objects.filter(operation_officer = user).first()
-        cc = CollectionCenter.objects.filter(floor_supervisor = user).first()
+        warehouse = Warehouse.objects.filter(Q(operation_officer=user) | Q(warehouse_manager=user)).first()
+        cc = CollectionCenter.objects.filter(Q(floor_supervisor=user) | Q(zonal_manager=user)).first()
         if warehouse or cc:
+            return True
+        return False
+
+class CanBuyingEmptyCratesPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        user = request.user
+        print(user)
+        warehouse = Warehouse.objects.filter(operation_officer = user).first()
+        if warehouse:
             return True
         return False
 
@@ -138,7 +148,6 @@ class CanEmptyTruckEntryCheckPermission(BasePermission):
         if warehouse or cc:
             return True
         return False
-
 
 class EmptyTruckEntryCheckView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
@@ -395,14 +404,15 @@ class CratesTracking(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        warehouse = Warehouse.objects.filter(operation_officer=user).first()
-        cc = CollectionCenter.objects.filter(floor_supervisor=user).first()
+        warehouse = Warehouse.objects.filter(Q(operation_officer=user) | Q(warehouse_manager=user)).first()
+        cc = CollectionCenter.objects.filter(Q(floor_supervisor=user) | Q(zonal_manager=user)).first()
+
         if warehouse:
-            print(LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), warehouse=warehouse))
+            # print(LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), warehouse=warehouse))
             return LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), warehouse=warehouse)
 
         elif cc:
-            print(LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), collection_center=cc))
+            # print(LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), collection_center=cc))
             return LoadoutBunch.objects.filter(~Q(loadoutBunch_status="COMPLETED"), collection_center=cc)
 
 
@@ -412,62 +422,80 @@ class CratesTracking(ListAPIView):
         user = request.user
         warehouse = Warehouse.objects.filter(operation_officer=user).first()
         cc = CollectionCenter.objects.filter(floor_supervisor=user).first()
+        loadouts = None
         if warehouse:
-            place = "warehouse"
-            source_destination = warehouse
+            loadouts = Loadout.objects.filter(Q(truck_status="ENTRY_CHECKED") | Q(truck_status="UNLOADED"),warehouse=warehouse).first()
             person = warehouse.security_gate_keeper
-            crate_type = "Filled Crates"
+            crate_type = "filled_crates"
         elif cc:
-            place = "collection_center"
-            source_destination = cc
+            loadouts = Loadout.objects.filter(Q(truck_status="ENTRY_CHECKED") | Q(truck_status="UNLOADED"),collection_center=cc).first()
             person = cc.floor_supervisor
-            crate_type = "Empty Crates"
+            crate_type = "empty_crates"
 
-        loadouts = Loadout.objects.filter(Q(truck_status="ENTRY_CHECKED") | Q(truck_status="UNLOADED"),**{place: source_destination}).first()
         if loadouts:
             action = "Unload" if loadouts.truck_status=="ENTRY_CHECKED" else "Waiting for Exit Check"
-            print(loadouts.truck_status)
             single_data = {
                         "id": loadouts.id,
-                        "truck Number Plate": loadouts.loadout_bunch.truck.number_plate,
-                        "crates": f"{loadouts.crates} {crate_type}",
-                        "Action" : f"{action}",
-                        "Date and Time": f"{loadouts.entryCheck_at}",
+                        "vehicle_number_plate": loadouts.loadout_bunch.truck.number_plate,
+                        "crates": loadouts.crates,
+                        "crates_type": crate_type,
+                        "status" : f"{action}",
+                        "date_time": f"{loadouts.entryCheck_at}",
                         "action_by" : f"{person.first_name} {person.last_name}"
                         }
             data.append(single_data)
-        if queryset:
+
+        wm = Warehouse.objects.filter(warehouse_manager=user).first()
+        zm = cc = CollectionCenter.objects.filter(zonal_manager=user).first()
+        person = wm.operation_officer if wm else zm.floor_supervisor
+        if wm or zm:
+            for loadout_bunch in queryset:
+                crate_type = "filled_crates" if loadout_bunch.collection_center else "empty_crates"
+                if loadout_bunch.loadoutBunch_status == "LOADED":
+                    single_data = {
+                    "id": loadout_bunch.id,
+                    "vehicle_number_plate": loadout_bunch.truck.number_plate,
+                    "crates": loadout_bunch.crates,
+                    "crates_type": crate_type,
+                    "status": "waiting_for_approval",
+                    "date_time": f"{loadout_bunch.load_at}",
+                    "action_by" : f"{person.first_name} {person.last_name}"
+                    }
+                data.append(single_data)
+            return Response({"status": "success","message": "Successfully fetched the data.", "data":data},status=status.HTTP_200_OK)
+
+        elif queryset:
             for loadout_bunch in queryset:
                 loadout = loadout_bunch.loadout_loadoutbunch.filter(~Q(truck_status="EXITED")).order_by("id").first()
-                print(loadout.truck_status)
-                crate_type = "Filled Crates" if loadout_bunch.collection_center else "Empty Crates"
-                truck_tracking = loadout.truck_status if loadout_bunch.loadoutBunch_status=="IN_PROGRESS" else loadout_bunch.loadoutBunch_status
+                crate_type = "filled_crates" if loadout_bunch.collection_center else "empty_crates"
+                truck_tracking = loadout.truck_status.lower() if loadout_bunch.loadoutBunch_status=="IN_PROGRESS" else loadout_bunch.loadoutBunch_status
 
                 if truck_tracking == "PENDING":
-                    truck_tracking = "Load Empty Crates" if loadout_bunch.warehouse else "Load Filled Crates"
+                    truck_tracking = "load_empty_crates" if loadout_bunch.warehouse else "load_filled_crates"
                     last_action_at = loadout_bunch.created_at
                     last_action_by = loadout_bunch.warehouse.security_gate_keeper if loadout_bunch.warehouse else loadout_bunch.collection_center.floor_supervisor
 
                 elif truck_tracking == "LOADED":
-                    truck_tracking = "Waiting for approval"
+                    truck_tracking = "waiting_for_approval"
                     last_action_at = loadout_bunch.load_at
                     last_action_by = loadout_bunch.warehouse.operation_officer if loadout_bunch.warehouse else loadout_bunch.collection_center.floor_supervisor
 
                 elif truck_tracking == "APPROVED":
-                    truck_tracking = "Dispatch"
+                    truck_tracking = "dispatch"
                     last_action_at = loadout_bunch.verified_at
                     last_action_by = loadout_bunch.warehouse.warehouse_manager if loadout_bunch.warehouse else loadout_bunch.collection_center.zonal_manager
 
                 elif truck_tracking == "DISPATCHED":
-                    truck_tracking = "Waiting for Exit Check" if loadout.warehouse else "Going to"
+                    truck_tracking = "waiting_for_exit_check" if loadout.warehouse else "going_to"
                     last_action_at = loadout_bunch.dispatch_at
                     last_action_by = loadout_bunch.warehouse.operation_officer if loadout_bunch.warehouse else loadout_bunch.collection_center.floor_supervisor
 
                 single_data = {
                     "id": loadout_bunch.id,
-                    "truck Number Plate": loadout_bunch.truck.number_plate,
-                    "crates": f"{loadout_bunch.crates} {crate_type}",
-                    "Action": f"{truck_tracking}"
+                    "vehicle_number_plate": loadout_bunch.truck.number_plate,
+                    "crates": loadout_bunch.crates,
+                    "crates_type": crate_type,
+                    "status": f"{truck_tracking}"
                     }
 
                 if loadout_bunch.loadoutBunch_status == "IN_PROGRESS":
@@ -476,7 +504,6 @@ class CratesTracking(ListAPIView):
                         first_loadout = loadout_bunch.loadout_loadoutbunch.all().order_by("id").first()
                         load_coming = Loadout.objects.filter(truck_status="GOING").order_by("id").first()
                         load_exited = Loadout.objects.filter(truck_status="EXITED").order_by("id").last()
-                        print(first_loadout, load_coming, load_exited)
                         if first_loadout == load_coming:
                             last_action_at = loadout_bunch.sg_exit_at if loadout_bunch.warehouse else loadout_bunch.dispatch_at
                             last_action_by = loadout_bunch.warehouse.security_gate_keeper if loadout_bunch.warehouse else loadout_bunch.collection_center.floor_supervisor
@@ -493,7 +520,23 @@ class CratesTracking(ListAPIView):
                         last_action_by = loadout.warehouse.operation_officer if loadout.warehouse else loadout.collection_center.floor_supervisor
 
                 single_data["action_by"] = f"{last_action_by.first_name} {last_action_by.last_name}"
-                single_data["Date and Time"] = last_action_at
+                single_data["date_time"] = last_action_at
                 data.append(single_data)
 
         return Response({"status": "success","message": "Successfully fetched the data.", "data":data},status=status.HTTP_200_OK)
+
+
+class BuyingEmptyCratesView(CreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, CanBuyingEmptyCratesPermission]
+    serializer_class = BuyingEmptyCratesSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data, context={'user':request.user})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        validated_data = serializer.validated_data
+        return Response(
+            {"status": "success", "message": "Successfully Crates added", "data":validated_data},
+            status=status.HTTP_200_OK
+        )
