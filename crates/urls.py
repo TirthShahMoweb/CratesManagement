@@ -13,8 +13,8 @@ urlpatterns = [
     path('exitcheckView/<int:pk>', warehouseViews.ExitcheckView.as_view()),
     path('unloadTruckView/<int:pk>', warehouseViews.UnloadTruckView.as_view()),
     path('cratesTracking',warehouseViews.CratesTracking.as_view()),
-    path('emptyTruckEntryCheckView',warehouseViews.EmptyTruckEntryCheckView.as_view()),
-
+    path('buyingEmptyCratesView', warehouseViews.BuyingEmptyCratesView.as_view()),
+    path('emptyTruckEntryCheckView', warehouseViews.EmptyTruckEntryCheckView.as_view()),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),]

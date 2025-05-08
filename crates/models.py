@@ -127,3 +127,19 @@ class CratesManagementLog(BaseModel):
     empty_crates = models.IntegerField(default=0, null=True, blank=True)
     missing_crates = models.IntegerField(default=0, null=True, blank=True)
     damaged_crates = models.IntegerField(default=0, null=True, blank=True)
+
+
+class StockInEmptyCrates(BaseModel):
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    vendor_description = models.TextField(null=True, blank=True)
+    crates = models.IntegerField(default=0)
+
+
+# class SRManagementLog(BaseModel):
+#     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, null=True, blank=True, related_name="sr_warehouse")
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='managed_warehouses', null=True, blank=True)
+#     total_crates = models.IntegerField(default=0, null=True, blank=True)
+#     filled_crates = models.IntegerField(default=0, null=True, blank=True)
+#     empty_crates = models.IntegerField(default=0, null=True, blank=True)
+#     missing_crates = models.IntegerField(default=0, null=True, blank=True)
+#     damaged_crates = models.IntegerField(default=0, null=True, blank=True)
