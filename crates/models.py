@@ -2,6 +2,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from psutil import _Status
 from utils.baseModel import BaseModel
 from CratesManagement import settings
 
@@ -135,11 +136,17 @@ class StockInEmptyCrates(BaseModel):
     crates = models.IntegerField(default=0)
 
 
-# class SRManagementLog(BaseModel):
-#     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, null=True, blank=True, related_name="sr_warehouse")
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='managed_warehouses', null=True, blank=True)
-#     total_crates = models.IntegerField(default=0, null=True, blank=True)
-#     filled_crates = models.IntegerField(default=0, null=True, blank=True)
-#     empty_crates = models.IntegerField(default=0, null=True, blank=True)
-#     missing_crates = models.IntegerField(default=0, null=True, blank=True)
-#     damaged_crates = models.IntegerField(default=0, null=True, blank=True)
+class SRManagementLog(BaseModel):
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, null=True, blank=True, related_name="sr_warehouse")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='managed_warehouses', null=True, blank=True)
+    total_crates = models.IntegerField(default=0, null=True, blank=True)
+    empty_crates = models.IntegerField(default=0, null=True, blank=True)
+    missing_crates = models.IntegerField(default=0, null=True, blank=True)
+    damaged_crates = models.IntegerField(default=0, null=True, blank=True)
+    ready_to_sell_crates = models.IntegerField(default=0, null=True, blank=True)
+    forgotten_crates_returned = models.IntegerField(default=0, null=True, blank=True)
+    sg_exit_at = models.DateTimeField(null=True, blank=True)
+    sg_entrycheck_at = models.DateTimeField(null=True, blank=True)
+    sg_description = models.TextField(null=True, blank=True)
+    oo_verified_at = models.DateTimeField(null=True, blank=True)
+    oo_status = models.CharField(max_length=50, choices=LoadoutStatus, default='PENDING')
